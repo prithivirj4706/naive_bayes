@@ -71,29 +71,31 @@ def load_assets():
 
 try:
     model, vectorizer = load_assets()
+except Exception as e:
+    st.error(f"Error loading model assets: {e}")
+    st.info("Try running 'model.py' locally to generate correct pickle files for your sklearn version.")
+    st.stop()
 
-    # User Input
-    message = st.text_area("Message Content", placeholder="Type your message here...", height=150)
+# User Input
+message = st.text_area("Message Content", placeholder="Type your message here...", height=150)
 
-    if st.button("Analyze Message"):
-        if message.strip():
-            # Vectorize input
-            data = [message]
-            vect = vectorizer.transform(data)
-            
-            # Prediction
-            prediction = model.predict(vect)[0]
-            
-            # Display Result
-            if prediction == 'spam':
-                st.markdown(f'<div class="result-container spam">🚨 This is a SPAM message!</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="result-container ham">✅ This is a HAM (Genuine) message.</div>', unsafe_allow_html=True)
+if st.button("Analyze Message"):
+    if message.strip():
+        # Vectorize input
+        data = [message]
+        vect = vectorizer.transform(data)
+        
+        # Prediction
+        prediction = model.predict(vect)[0]
+        
+        # Display Result
+        if prediction == 'spam':
+            st.markdown(f'<div class="result-container spam">🚨 This is a SPAM message!</div>', unsafe_allow_html=True)
         else:
-            st.warning("Please enter some text to analyze.")
+            st.markdown(f'<div class="result-container ham">✅ This is a HAM (Genuine) message.</div>', unsafe_allow_html=True)
+    else:
+        st.warning("Please enter some text to analyze.")
 
-except FileNotFoundError:
-    st.error("Model files not found. Please run 'model.py' first to train the model.")
 
 # Footer
 st.markdown("---")
